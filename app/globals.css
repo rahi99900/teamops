@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TeamOps Design System - Blue Professional Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@layer base {
+  :root {
+    /* Primary Blue Palette */
+    --primary: 221.2 83% 53%;
+    --primary-dark: 224.3 76% 48%;
+    --primary-light: 214 95% 93%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Background & Surface */
+    --background: 210 40% 98%;
+    --background-light: 210 40% 98%;
+    --foreground: 222 84% 5%;
+
+    /* Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 5%;
+
+    /* Semantic Colors */
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --success-light: 141 79% 85%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-light: 48 96% 89%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-light: 0 86% 97%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border & Input */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221.2 83% 53%;
+
+    /* Radius */
+    --radius: 0.5rem;
+
+    /* Shadows */
+    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-elevated: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-primary: 0 4px 14px -3px hsl(221.2 83% 53% / 0.25);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 84% 5%;
+    --sidebar-primary: 221.2 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 221.2 83% 53%;
+  }
+
+  .dark {
+    --primary: 217.2 91% 60%;
+    --primary-dark: 217.2 91% 50%;
+    --primary-light: 217 33% 17%;
+    --primary-foreground: 222 47% 11%;
+
+    --background: 222 84% 5%;
+    --background-light: 217 33% 17%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 217 33% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-light: 142 76% 11%;
+    --warning: 38 92% 50%;
+    --warning-light: 38 92% 11%;
+    --destructive: 0 63% 31%;
+    --destructive-light: 0 63% 11%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217.2 91% 60%;
+
+    --sidebar-background: 217 33% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91% 60%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 217.2 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Status Indicator Animations */
+  .pulse-status {
+    @apply relative;
+  }
+  
+  .pulse-status::before {
+    content: '';
+    @apply absolute inset-0 rounded-full animate-ping bg-current opacity-75;
+  }
+  
+  /* Gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-dark)) 100%);
+  }
+  
+  .gradient-success {
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(142 76% 30%) 100%);
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-card/80 backdrop-blur-md;
+  }
+  
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+  
+  /* Timer font */
+  .font-timer {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
