@@ -134,6 +134,51 @@ export default function Announcements() {
 
       if (error) throw error;
 
+      // --- CREATE NOTIFICATIONS ---
+      // 1. Get all active users in the company (excluding the sender)
+      let query = supabase
+        .from('users')
+        .select('id')
+        .eq('company_id', user.companyId)
+        .eq('is_active', true)
+        .neq('id', user.id);
+
+      const { data: usersToNotify } = await query;
+
+      if (usersToNotify && usersToNotify.length > 0) {
+        let finalUserIds = usersToNotify.map(u => u.id);
+
+        // 2. If not 'all', filter by role
+        if (!sendToAll && selectedRoles.length > 0) {
+          const { data: roleData } = await supabase
+            .from('user_roles')
+            .select('user_id')
+            .in('user_id', finalUserIds)
+            .in('role', selectedRoles);
+
+          if (roleData) {
+            finalUserIds = roleData.map(r => r.user_id);
+          } else {
+            finalUserIds = [];
+          }
+        }
+
+        // 3. Insert notifications
+        if (finalUserIds.length > 0) {
+          const notifications = finalUserIds.map(userId => ({
+            user_id: userId,
+            company_id: user.companyId,
+            type: 'announcement',
+            title: title,
+            message: message,
+            actor_id: user.id,
+          }));
+
+          await supabase.from('notifications').insert(notifications);
+        }
+      }
+      // ----------------------------
+
       toast({
         title: 'Announcement Sent',
         description: sendToAll

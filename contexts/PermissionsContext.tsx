@@ -118,35 +118,36 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
   // Fetch roles and user counts from database
   const fetchRoles = async () => {
     if (!user?.companyId) {
-      // Return empty for users without company
       setRoles([]);
       setLoading(false);
       return;
     }
 
     try {
-      // Fetch user counts per role from user_roles table
-      const { data: userRolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role, user_id')
-        .in('user_id', (await supabase
-          .from('users')
-          .select('id')
-          .eq('company_id', user.companyId)
-          .then(res => (res.data || []).map(u => u.id))));
+      // Step 1: Get all user IDs in this company
+      const { data: companyUsers } = await supabase
+        .from('users')
+        .select('id')
+        .eq('company_id', user.companyId);
+      const companyUserIds = (companyUsers || []).map((u: any) => u.id);
 
-      if (rolesError) throw rolesError;
+      // Step 2: Get role assignments for all company users
+      let roleCounts: Record<string, number> = {};
+      if (companyUserIds.length > 0) {
+        const { data: userRolesData } = await supabase
+          .from('user_roles')
+          .select('role, user_id')
+          .in('user_id', companyUserIds);
 
-      // Count users per role
-      const roleCounts: Record<string, number> = {};
-      (userRolesData || []).forEach((ur: any) => {
-        if (ur.role) {
-          roleCounts[ur.role] = (roleCounts[ur.role] || 0) + 1;
-        }
-      });
+        (userRolesData || []).forEach((ur: any) => {
+          const r = (ur.role || '').toString().toLowerCase();
+          if (r && r !== 'unassigned') {
+            roleCounts[r] = (roleCounts[r] || 0) + 1;
+          }
+        });
+      }
 
-
-      // Fetch custom roles from database ONLY
+      // Step 3: Fetch custom roles from database
       const { data: customRolesData, error: customRolesError } = await supabase
         .from('custom_roles')
         .select('*')
@@ -159,10 +160,9 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Fetch permissions for custom roles
+      // Step 4: Fetch permissions for custom roles
       const customRoleIds = (customRolesData || []).map((r: any) => r.id);
       let customRolePermissions: any[] = [];
-
       if (customRoleIds.length > 0) {
         const { data: permsData } = await supabase
           .from('custom_role_permissions')
@@ -171,18 +171,22 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
         customRolePermissions = permsData || [];
       }
 
-      // Build ALL roles from custom_roles table
-      const allRoles = (customRolesData || []).map((role: any) => ({
-        id: role.id,
-        name: role.name,
-        description: role.description || '',
-        permissions: customRolePermissions
-          .filter((p: any) => p.role_id === role.id)
-          .map((p: any) => p.permission_key),
-        userCount: roleCounts[role.id] || 0,
-        isSystem: false,
-        canPromoteToCeo: false,
-      }));
+      // Step 5: Build role list — match userCount by role.id first, then by role.name
+      const allRoles = (customRolesData || []).map((role: any) => {
+        const byId = roleCounts[role.id.toLowerCase()] || 0;
+        const byName = roleCounts[role.name.toLowerCase()] || 0;
+        return {
+          id: role.id,
+          name: role.name,
+          description: role.description || '',
+          permissions: customRolePermissions
+            .filter((p: any) => p.role_id === role.id)
+            .map((p: any) => p.permission_key),
+          userCount: byId + byName,
+          isSystem: false,
+          canPromoteToCeo: false,
+        };
+      });
 
       setRoles(allRoles);
     } catch (error) {
@@ -192,6 +196,7 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
 
   // Fetch join requests (company applications)
   const fetchJoinRequests = async () => {

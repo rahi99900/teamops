@@ -26,9 +26,6 @@ export default function NotFound() {
           <Button onClick={() => router.push('/')} size="lg">
             Go Home
           </Button>
-          <Button variant="outline" onClick={() => router.back()} size="lg">
-            Go Back
-          </Button>
         </div>
         <p className="mt-8 text-sm text-muted-foreground">
           Redirecting to home in 5 seconds...
