@@ -49,7 +49,8 @@ export const allPermissions: Permission[] = [
   { id: 'verification', label: 'Verification', description: 'View and complete verification requests', route: '/employee-verification' },
   { id: 'manager-dashboard', label: 'Manager Dashboard', description: 'Access manager dashboard', route: '/dashboard/manager' },
   { id: 'ceo-dashboard', label: 'CEO Dashboard', description: 'Access CEO dashboard with company overview', route: '/dashboard/ceo' },
-  { id: 'team', label: 'Team Management', description: 'View and manage team members', route: '/team' },
+  { id: 'staffs', label: 'Staff Management', description: 'View and manage all staff members', route: '/staffs' },
+  { id: 'team', label: 'Team Management', description: 'View and manage team members', route: '/staffs' },
   { id: 'verification-control', label: 'Verification Control', description: 'Send and review verification requests', route: '/verification-control' },
   { id: 'reports', label: 'Reports & Analytics', description: 'Access to reports and analytics', route: '/reports' },
   { id: 'work-time-control', label: 'Work Time Control', description: 'Control break times and work hours', route: '/work-time-control' },
@@ -60,6 +61,7 @@ export const allPermissions: Permission[] = [
   { id: 'staff-requests', label: 'Staff Requests', description: 'Approve/reject staff join requests', route: '/staff-requests' },
   { id: 'announcements', label: 'Announcements', description: 'Send company-wide announcements', route: '/announcements' },
 ];
+
 
 // Default roles configuration
 const defaultRoleConfigs: Record<string, { name: string; description: string; permissions: string[]; isSystem: boolean }> = {

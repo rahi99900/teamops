@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, Menu, LayoutGrid, X, Check, Megaphone, ClipboardCheck, DollarSign, Settings, Building2, LogOut } from 'lucide-react';
+import { Bell, Menu, LayoutGrid, X, Check, Megaphone, ClipboardCheck, DollarSign, Settings, Building2, LogOut, UserPlus, UserMinus, Shield, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,8 +38,21 @@ export function Navbar({ onMenuClick, showMenu = true }: NavbarProps) {
 
   const getNotificationIcon = (type: NotificationType) => {
     switch (type) {
+      case 'company_join':
+      case 'join_approved':
+        return <UserPlus className="h-4 w-4 text-green-500" />;
+      case 'company_leave':
+      case 'join_rejected':
+      case 'application_rejected':
+        return <UserMinus className="h-4 w-4 text-destructive" />;
+      case 'staff_request':
+        return <UserPlus className="h-4 w-4 text-primary" />;
+      case 'role_assigned':
+        return <Shield className="h-4 w-4 text-primary" />;
+      case 'announcement':
       case 'company_update':
         return <Megaphone className="h-4 w-4 text-primary" />;
+      case 'verification':
       case 'verification_request':
         return <ClipboardCheck className="h-4 w-4 text-yellow-500" />;
       case 'salary_published':
@@ -53,14 +66,21 @@ export function Navbar({ onMenuClick, showMenu = true }: NavbarProps) {
     markAsRead(notification.id);
 
     const routes: Record<NotificationType, string> = {
+      company_join: '/dashboard',
+      company_leave: '/company-apply',
+      application_rejected: '/company-apply',
+      staff_request: '/staff-requests',
+      role_assigned: '/dashboard',
+      announcement: '/dashboard',
+      verification: '/employee-verification',
+      leave_request: '/leave-requests',
+      salary_published: '/salary',
+      // legacy
       company_update: '/company-settings',
       verification_request: '/employee-verification',
-      salary_published: '/salary',
       join_approved: '/dashboard',
       join_rejected: '/dashboard',
-      announcement: '/dashboard',
       break_alert: '/dashboard',
-      leave_request: '/leave-requests',
       general: '/dashboard',
     };
 

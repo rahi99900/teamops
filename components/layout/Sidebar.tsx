@@ -39,7 +39,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const navItems = useMemo(() => {
         if (!user) return []
 
-        // Unassigned or pending users: show limited nav
+        // Truly unassigned or pending users: show limited nav (no dashboard unless they have permission)
         if (
             user.role === 'unassigned' ||
             user.companyStatus === 'pending' ||
@@ -82,12 +82,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     self.findIndex(i => i.href === item.href) === index
                 )
 
-            // Fallback to unassigned items if permissions are empty (e.g. not seeded yet)
-            return items.length > 0 ? items : unassignedNavItems
+            // If approved but no permissions seeded yet → show profile + company apply only
+            if (items.length === 0) {
+                return [
+                    { href: '/profile', label: 'My Profile', icon: UserCog },
+                    { href: '/company-apply', label: 'Company', icon: Briefcase },
+                ]
+            }
+            return items
         }
 
         return unassignedNavItems
     }, [user, hasPermission])
+
 
     // Only hide sidebar if there is no user at all
     if (!user) {
